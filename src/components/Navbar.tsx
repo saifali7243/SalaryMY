@@ -23,7 +23,13 @@ export function Navbar() {
             href="/salaries"
             className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted transition hover:text-foreground sm:inline-block"
           >
-            Browse salaries
+            Salaries
+          </Link>
+          <Link
+            href="/tools"
+            className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted transition hover:text-foreground sm:inline-block"
+          >
+            Tools
           </Link>
           <ThemeToggle />
           <Link
