@@ -35,7 +35,7 @@ export function Footer() {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com/in/saifali7243"
+                href="https://www.linkedin.com/in/saifalishaikh-"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
