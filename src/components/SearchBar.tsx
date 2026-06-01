@@ -14,13 +14,20 @@ interface SearchBarProps {
   roles: SearchableRole[];
   /** Visual size; the hero uses "lg". */
   size?: "md" | "lg";
+  /** Callback fired when the search dropdown opens/closes (typing or focus). */
+  onActiveChange?: (active: boolean) => void;
 }
 
-export function SearchBar({ roles, size = "lg" }: SearchBarProps) {
+export function SearchBar({ roles, size = "lg", onActiveChange }: SearchBarProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  function setOpenState(next: boolean) {
+    setOpen(next);
+    onActiveChange?.(next || query.trim().length > 0);
+  }
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -35,7 +42,8 @@ export function SearchBar({ roles, size = "lg" }: SearchBarProps) {
   }, [query, roles]);
 
   function go(slug: string) {
-    setOpen(false);
+    setOpenState(false);
+    setQuery("");
     router.push(`/salary/${slug}`);
   }
 
@@ -52,7 +60,7 @@ export function SearchBar({ roles, size = "lg" }: SearchBarProps) {
       const target = matches[activeIndex] ?? matches[0];
       if (target) go(target.slug);
     } else if (event.key === "Escape") {
-      setOpen(false);
+      setOpenState(false);
     }
   }
 
@@ -72,11 +80,11 @@ export function SearchBar({ roles, size = "lg" }: SearchBarProps) {
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
-            setOpen(true);
+            setOpenState(true);
             setActiveIndex(0);
           }}
-          onFocus={() => setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 120)}
+          onFocus={() => setOpenState(true)}
+          onBlur={() => setTimeout(() => setOpenState(false), 150)}
           onKeyDown={handleKeyDown}
           placeholder="Search a role, e.g. Software Engineer"
           aria-label="Search salaries by role"

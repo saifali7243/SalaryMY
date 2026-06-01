@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
 import { SearchBar, type SearchableRole } from "@/components/SearchBar";
@@ -9,6 +12,8 @@ interface HeroProps {
 }
 
 export function Hero({ roles, popular }: HeroProps) {
+  const [searchActive, setSearchActive] = useState(false);
+
   return (
     <section className="relative overflow-hidden border-b border-line bg-grid">
       <HeroScene />
@@ -30,16 +35,28 @@ export function Hero({ roles, popular }: HeroProps) {
         </p>
 
         <div className="mx-auto mt-8 max-w-xl animate-fade-up animation-delay-400">
-          <SearchBar roles={roles} size="lg" />
+          <SearchBar
+            roles={roles}
+            size="lg"
+            onActiveChange={setSearchActive}
+          />
         </div>
 
+        {/* Popular chips — smoothly hide when the search dropdown is active */}
         {popular.length > 0 && (
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-sm">
+          <div
+            className={`mt-6 flex flex-wrap items-center justify-center gap-2 text-sm transition-all duration-300 ${
+              searchActive
+                ? "pointer-events-none max-h-0 translate-y-2 opacity-0"
+                : "max-h-20 translate-y-0 opacity-100"
+            }`}
+          >
             <span className="text-muted-2">Popular:</span>
             {popular.map((role) => (
               <Link
                 key={role.slug}
                 href={`/salary/${role.slug}`}
+                tabIndex={searchActive ? -1 : 0}
                 className="rounded-full border border-line bg-surface/60 px-3 py-1 font-medium text-muted backdrop-blur transition hover:border-brand-300 hover:text-brand-600"
               >
                 {role.role}
