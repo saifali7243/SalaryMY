@@ -3,11 +3,13 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <div className="container-page flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
-      <p className="text-sm font-semibold text-brand-600">404</p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+      <p className="text-sm font-semibold text-brand-600 dark:text-brand-400">
+        404
+      </p>
+      <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         We couldn&apos;t find that page
       </h1>
-      <p className="mt-3 max-w-md text-slate-600">
+      <p className="mt-3 max-w-md text-muted">
         The salary or page you&apos;re looking for doesn&apos;t exist yet. Try
         searching from the homepage or browse all salaries.
       </p>
@@ -20,7 +22,7 @@ export default function NotFound() {
         </Link>
         <Link
           href="/salaries"
-          className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-brand-300"
+          className="rounded-xl border border-line bg-surface px-5 py-2.5 text-sm font-semibold text-foreground transition hover:border-brand-300"
         >
           Browse salaries
         </Link>

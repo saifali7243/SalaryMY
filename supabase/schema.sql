@@ -83,30 +83,74 @@ create policy "approved submissions are readable"
 
 -- ----------------------------------------------------------------------------
 -- SEED DATA — sample Malaysian market salaries (monthly, MYR)
--- These figures are illustrative starting data; replace with your own sources.
+-- Generated as roles × locations: each role has base junior/mid/senior bands
+-- at the national baseline, scaled by a per-location multiplier and rounded to
+-- the nearest RM 50. This mirrors the generation logic in src/lib/salary.ts.
+-- These figures are illustrative; replace with your own sourced data.
 -- ----------------------------------------------------------------------------
-insert into public.salaries (role, location, experience_level, salary_min, salary_max, source) values
-  ('Software Engineer',     'Malaysia', 'junior', 3500,  6000,  'SalaryMY market sample'),
-  ('Software Engineer',     'Malaysia', 'mid',    6000,  11000, 'SalaryMY market sample'),
-  ('Software Engineer',     'Malaysia', 'senior', 11000, 20000, 'SalaryMY market sample'),
-  ('Data Scientist',        'Malaysia', 'junior', 4000,  6500,  'SalaryMY market sample'),
-  ('Data Scientist',        'Malaysia', 'mid',    6500,  12000, 'SalaryMY market sample'),
-  ('Data Scientist',        'Malaysia', 'senior', 12000, 22000, 'SalaryMY market sample'),
-  ('Product Manager',       'Malaysia', 'junior', 5000,  8000,  'SalaryMY market sample'),
-  ('Product Manager',       'Malaysia', 'mid',    8000,  15000, 'SalaryMY market sample'),
-  ('Product Manager',       'Malaysia', 'senior', 15000, 28000, 'SalaryMY market sample'),
-  ('UX Designer',           'Malaysia', 'junior', 3500,  5500,  'SalaryMY market sample'),
-  ('UX Designer',           'Malaysia', 'mid',    5500,  9500,  'SalaryMY market sample'),
-  ('UX Designer',           'Malaysia', 'senior', 9500,  16000, 'SalaryMY market sample'),
-  ('DevOps Engineer',       'Malaysia', 'junior', 4500,  7000,  'SalaryMY market sample'),
-  ('DevOps Engineer',       'Malaysia', 'mid',    7000,  13000, 'SalaryMY market sample'),
-  ('DevOps Engineer',       'Malaysia', 'senior', 13000, 23000, 'SalaryMY market sample'),
-  ('Accountant',            'Malaysia', 'junior', 3000,  4500,  'SalaryMY market sample'),
-  ('Accountant',            'Malaysia', 'mid',    4500,  8000,  'SalaryMY market sample'),
-  ('Accountant',            'Malaysia', 'senior', 8000,  15000, 'SalaryMY market sample'),
-  ('Digital Marketing Executive', 'Malaysia', 'junior', 2800, 4200, 'SalaryMY market sample'),
-  ('Digital Marketing Executive', 'Malaysia', 'mid',    4200, 7500, 'SalaryMY market sample'),
-  ('Digital Marketing Executive', 'Malaysia', 'senior', 7500, 13000,'SalaryMY market sample')
+with roles(role, jmin, jmax, mmin, mmax, smin, smax) as (
+  values
+    ('Software Engineer',            3500, 6000, 6000, 11000, 11000, 20000),
+    ('Frontend Developer',           3300, 5800, 5800, 10000, 10000, 18000),
+    ('Backend Developer',            3600, 6200, 6200, 11500, 11500, 21000),
+    ('Mobile Developer',             3500, 6000, 6000, 11000, 11000, 19000),
+    ('DevOps Engineer',              4500, 7000, 7000, 13000, 13000, 23000),
+    ('QA Engineer',                  3000, 5000, 5000, 8500,  8500,  15000),
+    ('Cybersecurity Analyst',        4000, 6500, 6500, 12000, 12000, 22000),
+    ('Data Scientist',               4000, 6500, 6500, 12000, 12000, 22000),
+    ('Data Analyst',                 3200, 5200, 5200, 9000,  9000,  15000),
+    ('Data Engineer',                4200, 6800, 6800, 12500, 12500, 22000),
+    ('Machine Learning Engineer',    4500, 7500, 7500, 14000, 14000, 25000),
+    ('Product Manager',              5000, 8000, 8000, 15000, 15000, 28000),
+    ('UX Designer',                  3500, 5500, 5500, 9500,  9500,  16000),
+    ('UI Designer',                  3300, 5200, 5200, 9000,  9000,  15000),
+    ('Graphic Designer',             2800, 4200, 4200, 7000,  7000,  12000),
+    ('Digital Marketing Executive',  2800, 4200, 4200, 7500,  7500,  13000),
+    ('Content Writer',               2600, 4000, 4000, 6500,  6500,  11000),
+    ('SEO Specialist',               3000, 4800, 4800, 8000,  8000,  14000),
+    ('Sales Executive',              2800, 4500, 4500, 8000,  8000,  16000),
+    ('Accountant',                   3000, 4500, 4500, 8000,  8000,  15000),
+    ('Financial Analyst',            3500, 5500, 5500, 9500,  9500,  17000),
+    ('Human Resources Executive',    2800, 4500, 4500, 7500,  7500,  13000),
+    ('Business Analyst',             3800, 6000, 6000, 10500, 10500, 18000),
+    ('Project Manager',              4500, 7000, 7000, 12500, 12500, 22000)
+),
+locs(location, mult) as (
+  values
+    ('Malaysia',      1.00),
+    ('Kuala Lumpur',  1.12),
+    ('Selangor',      1.06),
+    ('Penang',        0.98),
+    ('Johor Bahru',   0.95),
+    ('Remote',        1.08)
+),
+levels(level) as (
+  values ('junior'::experience_level), ('mid'::experience_level), ('senior'::experience_level)
+),
+seed as (
+  select
+    r.role,
+    l.location,
+    lv.level,
+    (round(
+      (case lv.level
+        when 'junior' then r.jmin
+        when 'mid'    then r.mmin
+        else               r.smin
+      end) * l.mult / 50.0) * 50)::int as salary_min,
+    (round(
+      (case lv.level
+        when 'junior' then r.jmax
+        when 'mid'    then r.mmax
+        else               r.smax
+      end) * l.mult / 50.0) * 50)::int as salary_max
+  from roles r
+  cross join locs l
+  cross join levels lv
+)
+insert into public.salaries (role, location, experience_level, salary_min, salary_max, source)
+select role, location, level, salary_min, salary_max, 'SalaryMY market sample'
+from seed
 on conflict (lower(role), lower(location), experience_level) do update
   set salary_min = excluded.salary_min,
       salary_max = excluded.salary_max,

@@ -14,20 +14,20 @@ export default function SubmitPage() {
     <div className="container-page py-12 sm:py-16">
       <div className="mx-auto max-w-2xl">
         <header>
-          <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Submit your salary
           </h1>
-          <p className="mt-3 text-slate-600">
+          <p className="mt-3 text-muted">
             Your contribution is anonymous and helps thousands of Malaysians
             understand their market value. No account needed.
           </p>
         </header>
 
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-card sm:p-8">
+        <div className="themed mt-8 rounded-2xl border border-line bg-surface p-6 shadow-card sm:p-8">
           <SubmissionForm />
         </div>
 
-        <ul className="mt-6 space-y-2 text-sm text-slate-500">
+        <ul className="mt-6 space-y-2 text-sm text-muted">
           <li className="flex items-start gap-2">
             <Check /> We never ask for your name or identifying details.
           </li>

@@ -69,9 +69,19 @@ export default async function SalaryPage({ params }: PageProps) {
     notFound();
   }
 
-  const related = (await getSalaryGroups())
-    .filter((g) => g.slug !== group.slug)
-    .slice(0, 3);
+  const all = await getSalaryGroups();
+
+  // Same role in other locations first, then same category — for richer linking.
+  const sameRoleOtherLocations = all.filter(
+    (g) => g.role === group.role && g.slug !== group.slug
+  );
+  const sameCategory = all.filter(
+    (g) =>
+      g.category === group.category &&
+      g.role !== group.role &&
+      g.location === group.location
+  );
+  const related = [...sameRoleOtherLocations, ...sameCategory].slice(0, 6);
 
   // Structured data helps search engines render rich salary results.
   const jsonLd = {
@@ -101,29 +111,41 @@ export default async function SalaryPage({ params }: PageProps) {
       />
 
       {/* Breadcrumb */}
-      <nav className="text-sm text-slate-500" aria-label="Breadcrumb">
-        <ol className="flex items-center gap-2">
+      <nav className="text-sm text-muted" aria-label="Breadcrumb">
+        <ol className="flex flex-wrap items-center gap-2">
           <li>
             <Link href="/" className="hover:text-brand-600">
               Home
             </Link>
           </li>
-          <li aria-hidden="true">/</li>
+          <li aria-hidden="true" className="text-muted-2">
+            /
+          </li>
           <li>
             <Link href="/salaries" className="hover:text-brand-600">
               Salaries
             </Link>
           </li>
-          <li aria-hidden="true">/</li>
-          <li className="font-medium text-ink">{group.role}</li>
+          <li aria-hidden="true" className="text-muted-2">
+            /
+          </li>
+          <li className="font-medium text-foreground">{group.role}</li>
         </ol>
       </nav>
 
       <header className="mt-6 max-w-2xl">
-        <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-md bg-brand-500/10 px-2 py-0.5 text-xs font-medium text-brand-600 dark:text-brand-300">
+            {group.category}
+          </span>
+          <span className="rounded-md bg-surface-2 px-2 py-0.5 text-xs font-medium text-muted">
+            {group.location}
+          </span>
+        </div>
+        <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {group.role} Salary in {group.location}
         </h1>
-        <p className="mt-3 text-slate-600">
+        <p className="mt-3 text-muted">
           Based on aggregated market data, here&apos;s what a {group.role} earns
           per month in {group.location}, broken down by experience level.
         </p>
@@ -134,12 +156,12 @@ export default async function SalaryPage({ params }: PageProps) {
       </div>
 
       {/* CTA */}
-      <div className="mt-10 flex flex-col items-start gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-card sm:flex-row sm:items-center sm:justify-between">
+      <div className="themed mt-10 flex flex-col items-start gap-3 rounded-2xl border border-line bg-surface p-6 shadow-card sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-semibold text-ink">
+          <h2 className="font-semibold text-foreground">
             Earn a different amount as a {group.role}?
           </h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted">
             Add your salary anonymously to improve these benchmarks.
           </p>
         </div>
@@ -154,7 +176,9 @@ export default async function SalaryPage({ params }: PageProps) {
       {/* Related roles */}
       {related.length > 0 && (
         <section className="mt-14">
-          <h2 className="text-lg font-semibold text-ink">Related roles</h2>
+          <h2 className="text-lg font-semibold text-foreground">
+            Related salaries
+          </h2>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((g) => (
               <SalaryCard key={g.slug} group={g} />

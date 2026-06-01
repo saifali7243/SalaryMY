@@ -80,7 +80,7 @@ export function SubmissionForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-2xl border border-brand-200 bg-brand-50 p-8 text-center">
+      <div className="rounded-2xl border border-brand-500/30 bg-brand-500/10 p-8 text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-white">
           <svg
             className="h-6 w-6"
@@ -95,8 +95,10 @@ export function SubmissionForm() {
             <path d="M20 6 9 17l-5-5" />
           </svg>
         </div>
-        <h3 className="mt-4 text-lg font-semibold text-ink">Thank you!</h3>
-        <p className="mt-1 text-sm text-slate-600">
+        <h3 className="mt-4 text-lg font-semibold text-foreground">
+          Thank you!
+        </h3>
+        <p className="mt-1 text-sm text-muted">
           Your salary has been submitted and will help others negotiate fairly.
         </p>
         <button
@@ -167,7 +169,7 @@ export function SubmissionForm() {
       </div>
 
       {serverMessage && status === "error" && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
           {serverMessage}
         </p>
       )}
@@ -180,7 +182,7 @@ export function SubmissionForm() {
         {status === "submitting" ? "Submitting…" : "Submit salary"}
       </button>
 
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-muted-2">
         Submissions are anonymous. Don&apos;t include personal information.
       </p>
     </form>
@@ -214,7 +216,10 @@ function Field({
 }: FieldProps) {
   return (
     <div>
-      <label htmlFor={name} className="block text-sm font-medium text-ink">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium text-foreground"
+      >
         {label}
       </label>
       <input
@@ -229,14 +234,14 @@ function Field({
         placeholder={placeholder}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${name}-error` : undefined}
-        className={`mt-1.5 h-11 w-full rounded-lg border bg-white px-3 text-sm outline-none transition focus:ring-2 ${
+        className={`mt-1.5 h-11 w-full rounded-lg border bg-surface px-3 text-sm text-foreground outline-none transition placeholder:text-muted-2 focus:ring-2 ${
           error
-            ? "border-red-300 focus:border-red-400 focus:ring-red-200"
-            : "border-slate-200 focus:border-brand-500 focus:ring-brand-500/30"
+            ? "border-red-400 focus:border-red-400 focus:ring-red-500/20"
+            : "border-line focus:border-brand-500 focus:ring-brand-500/30"
         }`}
       />
       {error && (
-        <p id={`${name}-error`} className="mt-1 text-xs text-red-600">
+        <p id={`${name}-error`} className="mt-1 text-xs text-red-600 dark:text-red-400">
           {error}
         </p>
       )}

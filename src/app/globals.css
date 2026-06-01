@@ -2,9 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   Semantic color tokens. Values are space-separated RGB channels so Tailwind
+   alpha modifiers work (e.g. bg-surface/70). Light theme is the default; the
+   `.dark` class on <html> swaps to the dark palette.
+--------------------------------------------------------------------------- */
 :root {
-  --background: #f8fafc;
-  --foreground: #0b1220;
+  --background: 247 249 252; /* page background */
+  --surface: 255 255 255; /* cards / nav */
+  --surface-2: 241 245 249; /* chips / secondary surfaces */
+  --foreground: 11 18 32; /* primary text */
+  --muted: 71 85 105; /* secondary text */
+  --muted-2: 148 163 184; /* tertiary text */
+  --line: 226 232 240; /* borders */
+}
+
+.dark {
+  --background: 6 10 20;
+  --surface: 15 22 38;
+  --surface-2: 26 35 54;
+  --foreground: 237 242 249;
+  --muted: 156 169 188;
+  --muted-2: 110 124 145;
+  --line: 38 49 70;
 }
 
 @layer base {
@@ -13,16 +33,79 @@
   }
 
   body {
-    @apply bg-slate-50 text-ink antialiased;
+    @apply bg-background text-foreground antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   ::selection {
-    @apply bg-brand-200 text-brand-900;
+    @apply bg-brand-300/40 text-foreground;
+  }
+
+  /* Smoothly transition themeable surfaces when toggling dark mode. */
+  a,
+  button,
+  input,
+  .themed {
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
   }
 }
 
 @layer utilities {
   .container-page {
     @apply mx-auto max-w-6xl px-4 sm:px-6;
+  }
+
+  /* 3D helpers */
+  .perspective {
+    perspective: 1200px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  /* Frosted glass surface that adapts to the theme */
+  .glass {
+    @apply border border-line bg-surface/70 backdrop-blur-xl;
+  }
+
+  /* Subtle dotted grid background for hero sections */
+  .bg-grid {
+    background-image: radial-gradient(
+      rgb(var(--foreground) / 0.06) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
+  }
+
+  /* Animated brand gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-500 via-brand-400 to-brand-600 bg-clip-text text-transparent;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+  .animation-delay-600 {
+    animation-delay: 0.6s;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

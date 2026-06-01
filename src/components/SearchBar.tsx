@@ -63,7 +63,7 @@ export function SearchBar({ roles, size = "lg" }: SearchBarProps) {
     <div className="relative w-full">
       <div className="relative">
         <SearchIcon
-          className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 ${
+          className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-2 ${
             size === "lg" ? "h-5 w-5" : "h-4 w-4 left-3"
           }`}
         />
@@ -80,12 +80,12 @@ export function SearchBar({ roles, size = "lg" }: SearchBarProps) {
           onKeyDown={handleKeyDown}
           placeholder="Search a role, e.g. Software Engineer"
           aria-label="Search salaries by role"
-          className={`w-full rounded-xl border border-slate-200 bg-white shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 ${inputSize}`}
+          className={`w-full rounded-xl border border-line bg-surface text-foreground shadow-sm outline-none transition placeholder:text-muted-2 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 ${inputSize}`}
         />
       </div>
 
       {open && matches.length > 0 && (
-        <ul className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+        <ul className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-line bg-surface shadow-lg">
           {matches.map((match, index) => (
             <li key={match.slug}>
               <Link
@@ -96,11 +96,11 @@ export function SearchBar({ roles, size = "lg" }: SearchBarProps) {
                 }}
                 onMouseEnter={() => setActiveIndex(index)}
                 className={`flex items-center justify-between px-4 py-3 text-left text-sm transition ${
-                  index === activeIndex ? "bg-brand-50" : "bg-white"
+                  index === activeIndex ? "bg-brand-500/10" : "bg-surface"
                 }`}
               >
-                <span className="font-medium text-ink">{match.role}</span>
-                <span className="text-xs text-slate-400">{match.location}</span>
+                <span className="font-medium text-foreground">{match.role}</span>
+                <span className="text-xs text-muted-2">{match.location}</span>
               </Link>
             </li>
           ))}
@@ -108,7 +108,7 @@ export function SearchBar({ roles, size = "lg" }: SearchBarProps) {
       )}
 
       {open && query.trim() && matches.length === 0 && (
-        <div className="absolute z-20 mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500 shadow-lg">
+        <div className="absolute z-20 mt-2 w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-muted shadow-lg">
           No roles found. Try a different keyword or{" "}
           <Link href="/submit" className="font-medium text-brand-600">
             submit a salary
