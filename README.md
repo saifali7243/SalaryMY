@@ -1,3 +1,5 @@
+Access my project from :https://salarymalaysia.netlify.app/
+
 # SalaryMY
 
 > Malaysia's salary transparency platform — explore real salary ranges by role, location and experience level, use free career tools, and contribute your own salary anonymously.
